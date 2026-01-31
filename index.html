@@ -1,0 +1,2424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academy Pro - Learning Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --sidebar-width: 280px;
+            --bg-gradient: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --sidebar-bg: #ffffff;
+        }
+
+        .dark-theme {
+            --primary: #818cf8;
+            --secondary: #a78bfa;
+            --dark: #f8fafc;
+            --gray: #94a3b8;
+            --light: #1e293b;
+            --border: #334155;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --sidebar-bg: #0f172a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        * {
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Login */
+        .login-page {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            padding: 60px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            font-weight: 900;
+        }
+
+        .login-title {
+            font-family: 'Urbanist', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            background: var(--light);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            color: var(--text-main);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: var(--sidebar-bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            font-family: 'Urbanist', sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .btn-logout {
+            padding: 10px 20px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 70px;
+            width: var(--sidebar-width);
+            height: calc(100vh - 70px);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 24px 0;
+            overflow-y: auto;
+            z-index: 900;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-section {
+            padding: 0 16px;
+            margin-bottom: 24px;
+        }
+
+        .sidebar-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 16px;
+            margin-bottom: 12px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 12px;
+            margin: 2px 0;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 18px;
+            color: var(--gray);
+        }
+
+        .sidebar-link:hover {
+            background: var(--light);
+            color: var(--primary);
+        }
+
+        .sidebar-link:hover i {
+            color: var(--primary);
+        }
+
+        .sidebar-link.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .sidebar-link.active i {
+            color: white;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .user-card-mini {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--light);
+            border-radius: 16px;
+            text-decoration: none;
+        }
+
+        .user-info-mini {
+            overflow: hidden;
+        }
+
+        .user-info-mini .name {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-info-mini .id {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        /* Main */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: 70px;
+            padding: 40px;
+            min-height: calc(100vh - 70px);
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive Sidebar Toggle */
+        .menu-btn {
+            display: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--light);
+            border: 1px solid var(--border);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-main);
+            font-size: 20px;
+            transition: all 0.3s;
+        }
+
+        .menu-btn:hover {
+            background: var(--border);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 850;
+            display: none;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .menu-btn {
+                display: flex;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 1001;
+                top: 0;
+                height: 100vh;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 24px;
+            }
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .search-container {
+                display: none;
+            }
+
+            #scrollTopBtn {
+                left: auto !important;
+                right: 24px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            @media (max-width: 480px) {
+                .stats-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .stat-card {
+                    padding: 24px;
+                }
+
+                .stat-value {
+                    font-size: 28px;
+                }
+            }
+
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-right span#userName {
+                display: none;
+            }
+
+            .nav-right .user-avatar {
+                width: 36px;
+                height: 36px;
+            }
+
+            .navbar .logo {
+                font-size: 20px;
+            }
+
+            .detail-header {
+                padding: 32px 24px;
+            }
+
+            .detail-title {
+                font-size: 32px;
+            }
+
+            .learning-body {
+                flex-direction: column !important;
+            }
+
+            .video-player {
+                height: 250px;
+            }
+
+            .results-card {
+                padding: 40px 20px;
+            }
+
+            .results-score {
+                font-size: 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-logout {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s;
+            color: var(--text-main);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--card-bg);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--light);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-main);
+            font-size: 20px;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--border);
+        }
+
+        /* Card Colors */
+        .stat-card,
+        .course-card,
+        .learning-card,
+        .question-card,
+        .results-card,
+        .detail-header {
+            background: var(--card-bg) !important;
+            border-color: var(--border) !important;
+            color: var(--text-main);
+        }
+
+        .course-title,
+        .stat-value,
+        .login-title,
+        .detail-title,
+        .learning-title,
+        .question-text {
+            color: var(--text-main);
+        }
+
+        .course-description,
+        .stat-label,
+        .login-subtitle,
+        .learning-content {
+            color: var(--text-muted);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 900;
+            font-family: 'Urbanist', sans-serif;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--gray);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Courses */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 28px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12);
+        }
+
+        .course-header {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 72px;
+            position: relative;
+        }
+
+        .course-body {
+            padding: 28px;
+        }
+
+        .course-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--light);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .course-title {
+            font-family: 'Urbanist', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .course-description {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .course-meta {
+            display: flex;
+            gap: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        .course-status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-not-started {
+            background: #f1f5f9;
+            color: var(--gray);
+        }
+
+        .status-in-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* Course Detail */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+            cursor: pointer;
+            margin-bottom: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(-5px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .back-btn i {
+            transition: transform 0.3s;
+        }
+
+        .back-btn:hover i {
+            transform: translateX(-3px);
+        }
+
+        .detail-header {
+            background: var(--card-bg);
+            padding: 48px;
+            border-radius: 20px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border);
+        }
+
+        .detail-title {
+            font-family: 'Urbanist', sans-serif;
+            font-size: 42px;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: var(--light);
+            border-radius: 100px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.6s;
+        }
+
+        /* Learning Content */
+        .learning-card {
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border: 2px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .learning-card.active {
+            border-color: var(--primary);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+        }
+
+        .learning-card.completed {
+            border-color: var(--success);
+            background: linear-gradient(to right, #ffffff, #f0fdf4);
+        }
+
+        .learning-title {
+            font-family: 'Urbanist', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .learning-content {
+            color: var(--dark);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .video-player {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .play-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            cursor: pointer;
+            font-size: 32px;
+            color: var(--primary);
+        }
+
+        .btn-complete {
+            padding: 14px 28px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-start-test {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 32px;
+        }
+
+        /* Test */
+        .question-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            border: 2px solid var(--border);
+        }
+
+        .question-number {
+            display: inline-flex;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .question-text {
+            font-family: 'Urbanist', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            background: var(--light);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+        }
+
+        .option-label:hover {
+            border-color: var(--primary);
+        }
+
+        .option-label.selected {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+        }
+
+        /* Results */
+        .results-card {
+            background: var(--card-bg);
+            padding: 60px;
+            border-radius: 24px;
+            text-align: center;
+            margin-bottom: 32px;
+            border: 1px solid var(--border);
+        }
+
+        .results-score {
+            font-family: 'Urbanist', sans-serif;
+            font-size: 80px;
+            font-weight: 900;
+            margin: 20px 0;
+        }
+
+        .results-score.pass {
+            background: linear-gradient(135deg, var(--success), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .results-score.fail {
+            background: linear-gradient(135deg, var(--danger), var(--warning));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Certificate */
+        .certificate-wrapper {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            width: 100%;
+            margin: 40px auto;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+        }
+
+        .certificate {
+            background: #fff;
+            padding: 60px;
+            border: 20px solid transparent;
+            border-image: url('https://www.transparenttextures.com/patterns/gold-glitter.png') 30 stretch;
+            position: relative;
+            background-clip: padding-box;
+            box-shadow: inset 0 0 0 2px #c5a059;
+            font-family: 'Playfair Display', serif;
+            color: #2c3e50;
+            min-height: 650px;
+            min-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        @media (max-width: 1100px) {
+            .certificate {
+                transform: scale(0.9);
+                transform-origin: top center;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .certificate {
+                transform: scale(0.7);
+                transform-origin: top center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .certificate {
+                transform: scale(0.5);
+                transform-origin: top center;
+            }
+        }
+
+        .certificate::before {
+            content: '';
+            position: absolute;
+            inset: 10px;
+            border: 2px solid #c5a059;
+            pointer-events: none;
+        }
+
+        .certificate::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .cert-header {
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cert-badge {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+
+        .cert-title {
+            font-size: 64px;
+            font-weight: 700;
+            letter-spacing: 8px;
+            color: #1a202c;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .cert-subtitle {
+            font-size: 20px;
+            letter-spacing: 4px;
+            color: #718096;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        .cert-body {
+            max-width: 800px;
+            margin: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cert-text {
+            font-size: 22px;
+            font-style: italic;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .cert-name {
+            font-size: 52px;
+            font-weight: 800;
+            color: #1a202c;
+            border-bottom: 2px solid #c5a059;
+            display: inline-block;
+            margin: 20px 0;
+            padding: 0 40px;
+            min-width: 300px;
+        }
+
+        .cert-course-wrapper {
+            margin: 20px 0;
+        }
+
+        .cert-course {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .cert-footer {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .signature-box {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .signature-img {
+            font-family: 'Dancing Script', cursive;
+            font-size: 32px;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .signature-line {
+            width: 100%;
+            border-top: 1px solid #c5a059;
+            margin-bottom: 8px;
+        }
+
+        .signature-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #718096;
+            text-transform: uppercase;
+        }
+
+        .cert-meta {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            font-size: 12px;
+            color: #a0aec0;
+            text-align: right;
+        }
+
+        .btn-download {
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #c5a059, #9c7e41);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(197, 160, 89, 0.4);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Course Card Favorites */
+        .fav-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+
+        .fav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .fav-btn.active {
+            background: white;
+            color: #ef4444;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        @keyframes pulse-yellow {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
+        .level-up {
+            animation: pulse-yellow 1s infinite alternate;
+        }
+
+        /* Go to Top Button */
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 32px;
+            left: 300px; /* Offset from sidebar */
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            z-index: 99;
+        }
+
+        #scrollTopBtn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            #scrollTopBtn { left: 32px; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-page">
+        <div class="login-card">
+            <div class="login-logo">🎓</div>
+            <h1 class="login-title">Academy Pro</h1>
+            <p class="login-subtitle">Employee Training Platform</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Employee ID</label>
+                    <input type="text" id="employeeId" class="form-input" placeholder="Enter ID" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="employeeName" class="form-input" placeholder="Enter Name" required>
+                </div>
+                <button type="submit" class="btn-primary">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="hidden">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="menu-btn" onclick="toggleSidebar()" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="logo">Academy Pro</div>
+            </div>
+
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search courses..."
+                    oninput="filterCourses(this.value)">
+            </div>
+
+            <div class="nav-right">
+                <div class="theme-toggle" onclick="showNotifications()" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="theme-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </div>
+                <div class="user-avatar" id="userAvatar"></div>
+                <span id="userName" style="font-weight: 600; color: var(--text-main);"></span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Main Menu</div>
+                <div class="sidebar-link active" onclick="showDashboard()" id="nav-dashboard">
+                    <i class="fas fa-th-large"></i> Dashboard
+                </div>
+                <div class="sidebar-link" onclick="showMyCourses()" id="nav-courses">
+                    <i class="fas fa-book-open"></i> My Courses
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Achievements</div>
+                <div class="sidebar-link" onclick="showCertificates()" id="nav-certificates">
+                    <i class="fas fa-award"></i> Certificates
+                </div>
+                <div class="sidebar-link" onclick="showLeaderboard()" id="nav-leaderboard">
+                    <i class="fas fa-trophy"></i> Leaderboard
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Account</div>
+                <div class="sidebar-link" onclick="showProfile()" id="nav-profile">
+                    <i class="fas fa-user-circle"></i> My Profile
+                </div>
+                <div class="sidebar-link" onclick="showSettings()" id="nav-settings">
+                    <i class="fas fa-cog"></i> Settings
+                </div>
+                <div class="sidebar-link" onclick="showHelp()" id="nav-help">
+                    <i class="fas fa-question-circle"></i> Help & Support
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <a href="#" class="user-card-mini" onclick="showProfile(); return false;">
+                    <div class="user-avatar" id="footerAvatar" style="width: 32px; height: 32px; font-size: 12px;">
+                    </div>
+                    <div class="user-info-mini">
+                        <div class="name" id="footerName">User Name</div>
+                        <div class="id" id="footerId">EMP-001</div>
+                    </div>
+                </a>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard -->
+            <div id="dashboardPage">
+                <h1
+                    style="font-family: 'Urbanist', sans-serif; font-size: 36px; font-weight: 900; margin-bottom: 32px;">
+                    Dashboard
+                </h1>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"
+                            style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white;">📚</div>
+                        <div class="stat-value" id="totalCourses">12</div>
+                        <div class="stat-label">Total Courses</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"
+                            style="background: linear-gradient(135deg, #10b981, #06b6d4); color: white;">✅</div>
+                        <div class="stat-value" id="completedCourses">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"
+                            style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: white;">📝</div>
+                        <div class="stat-value" id="inProgressCourses">0</div>
+                        <div class="stat-label">In Progress</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"
+                            style="background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white;">🏆</div>
+                        <div class="stat-value" id="certificatesEarned">0</div>
+                        <div class="stat-label">Certificates</div>
+                    </div>
+                </div>
+
+                <!-- XP Progress Card -->
+                <div class="stat-card" style="margin-bottom: 32px; padding: 24px; display: flex; align-items: center; gap: 24px;">
+                    <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: white; flex-shrink: 0;" id="dashLevel">1</div>
+                    <div style="flex-grow: 1;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="font-weight: 700; color: var(--text-main);">Level Progress</span>
+                            <span style="color: var(--text-muted); font-size: 14px;" id="dashXPText">0 / 1000 XP</span>
+                        </div>
+                        <div class="progress-bar" style="height: 10px; margin-top: 0;">
+                            <div class="progress-fill" id="dashXPFill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2
+                    style="font-family: 'Urbanist', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 24px;">
+                    Available Courses
+                </h2>
+                <div class="course-grid" id="courseGrid"></div>
+            </div>
+
+            <!-- Course Detail -->
+            <div id="courseDetailPage" class="hidden">
+                <button class="back-btn" onclick="backToDashboard()"><i class="fas fa-arrow-left"></i> Back</button>
+                <div class="detail-header">
+                    <h1 class="detail-title" id="detailTitle"></h1>
+                    <p id="detailDescription" style="color: var(--gray); line-height: 1.7; margin-bottom: 20px;"></p>
+                    <div>
+                        <strong style="font-size: 14px;">Progress: <span id="progressPercentage">0%</span></strong>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="learningContainer"></div>
+                <button id="startTestBtn" class="btn-start-test hidden" onclick="startTest()">
+                    🎯 Start Final Assessment
+                </button>
+            </div>
+
+            <!-- Test Page -->
+            <div id="testPage" class="hidden">
+                <button class="back-btn" onclick="backToCourse()"><i class="fas fa-arrow-left"></i> Back</button>
+                <div class="detail-header" style="text-align: center;">
+                    <h1
+                        style="font-family: 'Urbanist', sans-serif; font-size: 36px; font-weight: 900; margin-bottom: 12px;">
+                        Final Assessment
+                    </h1>
+                    <p style="color: var(--text-muted);">Answer all questions to complete the course</p>
+                </div>
+                <div id="questionsContainer"></div>
+                <button class="btn-start-test" onclick="submitTest()">Submit Assessment</button>
+            </div>
+
+            <!-- Results Page -->
+            <div id="resultsPage" class="hidden">
+                <button class="back-btn" onclick="backToDashboard()"><i class="fas fa-arrow-left"></i> Back</button>
+                <div class="results-card">
+                    <div style="font-size: 100px;" id="resultsIcon"></div>
+                    <div class="results-score" id="resultsScore"></div>
+                    <h2 style="font-family: 'Urbanist', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 12px;"
+                        id="resultsMessage"></h2>
+                    <p style="color: var(--gray); margin-bottom: 40px;" id="resultsSubmessage"></p>
+                </div>
+
+                <div id="certificateContainer" class="hidden">
+                    <div class="certificate-wrapper">
+                        <div class="certificate" id="certificateContent">
+                            <div class="cert-header">
+                                <div class="cert-badge" style="font-size: 80px;">🏆</div>
+                                <h1 class="cert-title">Certificate</h1>
+                                <p class="cert-subtitle">of Achievement</p>
+                            </div>
+                            
+                            <div class="cert-body">
+                                <p class="cert-text">This is to certify that</p>
+                                <h2 class="cert-name" id="certName"></h2>
+                                <p class="cert-text">has successfully completed the requirements for</p>
+                                <div class="cert-course-wrapper">
+                                    <h3 class="cert-course" id="certCourse"></h3>
+                                </div>
+                                <p class="cert-text">demonstrating exceptional dedication and proficiency.</p>
+                            </div>
+
+                            <div class="cert-footer">
+                                <div class="signature-box">
+                                    <div class="signature-img">Academy Pro</div>
+                                    <div class="signature-line"></div>
+                                    <p class="signature-label">Issuing Authority</p>
+                                </div>
+                                <div class="signature-box">
+                                    <div class="signature-img" id="certDate"></div>
+                                    <div class="signature-line"></div>
+                                    <p class="signature-label">Date of Issue</p>
+                                </div>
+                                <div class="signature-box">
+                                    <div class="signature-img">Verified</div>
+                                    <div class="signature-line"></div>
+                                    <p class="signature-label">Official Seal</p>
+                                </div>
+                            </div>
+
+                            <div class="cert-meta">
+                                Grade: <span id="certScore"></span><br>
+                                Certificate ID: <span id="certEmpId"></span><br>
+                                Verification: academypro.edu/verify
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 32px;">
+                        <button class="btn-download" onclick="downloadCertificate()">
+                            <i class="fas fa-download"></i> Download Official Certificate
+                        </button>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 32px;">
+                    <button id="retakeBtn" class="btn-primary hidden" onclick="retakeTest()"
+                        style="display: inline-block; width: auto; padding: 16px 32px;">
+                        🔄 Retake Assessment
+                    </button>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profilePage" class="hidden">
+                <h1 style="font-family: 'Urbanist', sans-serif; font-size: 36px; font-weight: 900; margin-bottom: 32px;">My Profile</h1>
+                <div class="stat-card" style="display: flex; align-items: center; gap: 32px; padding: 48px; margin-bottom: 32px;">
+                    <div id="profileAvatarBig" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px; font-weight: 900;"></div>
+                    <div>
+                        <h2 id="profileName" style="font-size: 32px; font-weight: 800; margin-bottom: 8px;"></h2>
+                        <p id="profileId" style="color: var(--gray); font-size: 18px; margin-bottom: 16px;"></p>
+                        <div style="display: flex; gap: 12px;">
+                            <span class="course-category">Employee</span>
+                            <span class="course-category" style="background: #e0f2fe; color: #0369a1;">Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <h3 style="margin-bottom: 24px;">Recent Activity</h3>
+                    <div id="activityLog">
+                        <!-- Activity items -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificates Page -->
+            <div id="certificatesPage" class="hidden">
+                <h1
+                    style="font-family: 'Urbanist', sans-serif; font-size: 36px; font-weight: 900; margin-bottom: 32px;">
+                    Certificates</h1>
+                <div id="certificateGrid" class="course-grid">
+                    <!-- Certificates will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settingsPage" class="hidden">
+                <h1
+                    style="font-family: 'Urbanist', sans-serif; font-size: 36px; font-weight: 900; margin-bottom: 32px;">
+                    Settings</h1>
+                <div class="stat-card">
+                    <h3 style="margin-bottom: 24px;">Accessibility</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600;">Dark Mode</div>
+                            <div style="font-size: 14px; color: var(--gray);">Toggle dark and light themes</div>
+                        </div>
+                        <button class="btn-primary" style="width: auto; padding: 10px 20px;"
+                            onclick="toggleDarkMode()">Switch Theme</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Complete course database with 12 diverse courses
+        const courses = [
+            { 
+                id: 1, 
+                title: "Workplace Safety & Health", 
+                cat: "Compliance", 
+                level: "Beginner", 
+                icon: "🛡️", 
+                desc: "Comprehensive safety protocols and emergency procedures", 
+                dur: "2h", 
+                mods: 5, 
+                grad: "linear-gradient(135deg,#6366f1,#8b5cf6)", 
+                content: [
+                    { t: "video", title: "Safety Fundamentals", text: "Learn the core principles of workplace safety including hazard identification, risk assessment methodologies, and the hierarchy of controls. Understand how to create a safety-first culture in any organization.", vidId: "W98p58FwNfA" }, 
+                    { t: "lesson", title: "Personal Protective Equipment (PPE)", text: "Comprehensive guide to PPE selection and usage. Learn about different types of PPE including hard hats, safety glasses, gloves, respirators, and protective clothing. Understand when each type is required, proper fitting procedures, inspection protocols, and maintenance requirements." }, 
+                    { t: "lesson", title: "Emergency Response Procedures", text: "Master emergency preparedness including fire safety protocols, evacuation routes and assembly points, first aid basics, and emergency communication systems. Learn the PASS technique for fire extinguishers and when to fight a fire vs. evacuate." }, 
+                    { t: "interactive", title: "Safety Scenario Quiz", q: "You discover a chemical spill in the hallway. What is your FIRST action?", opts: ["Clean it up immediately", "Alert others and secure the area", "Take a photo for documentation", "Continue to your destination"], correct: 1 },
+                    { t: "lesson", title: "Incident Reporting & Investigation", text: "Learn the importance of near-miss reporting, how to properly document workplace incidents, root cause analysis techniques, and implementing corrective actions to prevent future occurrences." }
+                ], 
+                questions: [
+                    { q: "What does the 'PASS' acronym stand for when using a fire extinguisher?", opts: ["Pull, Aim, Squeeze, Sweep", "Push, Align, Select, Side", "Pull, Aim, Select, Stop", "Push, Aim, Squeeze, Side"], c: 0 }, 
+                    { q: "What is the primary purpose of conducting a risk assessment?", opts: ["To meet legal requirements only", "To identify and prioritize workplace hazards", "To assign blame for accidents", "To reduce insurance costs"], c: 1 }, 
+                    { q: "Who is ultimately responsible for workplace safety?", opts: ["The safety officer only", "Management only", "Everyone in the organization", "Only new employees"], c: 2 },
+                    { q: "Which of the following is the MOST effective control measure in the hierarchy of controls?", opts: ["Personal Protective Equipment (PPE)", "Administrative controls", "Elimination of the hazard", "Engineering controls"], c: 2 },
+                    { q: "What should you do if you witness a near-miss incident?", opts: ["Ignore it since no one was hurt", "Report it immediately to prevent future incidents", "Only report if someone asks", "Wait to see if it happens again"], c: 1 }
+                ], 
+                pass: 60 
+            },
+            { 
+                id: 2, 
+                title: "Data Security & Privacy", 
+                cat: "Technology", 
+                level: "Intermediate", 
+                icon: "🔐", 
+                desc: "Protect sensitive information and prevent cyber threats", 
+                dur: "3h", 
+                mods: 5, 
+                grad: "linear-gradient(135deg,#10b981,#06b6d4)", 
+                content: [
+                    { t: "video", title: "Cybersecurity Fundamentals", text: "Explore the CIA triad (Confidentiality, Integrity, Availability) as the foundation of information security. Learn data classification levels, the principle of least privilege, and defense-in-depth strategies.", vidId: "z5nc96U5q8A" }, 
+                    { t: "lesson", title: "Password Security & Authentication", text: "Master password best practices including creating strong passphrases, using password managers, implementing Multi-Factor Authentication (MFA), and understanding authentication factors (something you know, have, and are). Learn about password hashing, salting, and why password reuse is dangerous." }, 
+                    { t: "lesson", title: "Phishing & Social Engineering", text: "Recognize sophisticated phishing attacks including spear phishing, whaling, and vishing. Learn to identify red flags in emails such as urgency tactics, suspicious links, spoofed sender addresses, and requests for sensitive information. Understand pretexting, baiting, and tailgating attacks." }, 
+                    { t: "interactive", title: "Security Scenario", q: "You receive an urgent email from 'IT Support' asking you to verify your password by clicking a link. What should you do?", opts: ["Click the link and enter your password", "Reply with your password", "Report it as phishing to IT", "Forward it to colleagues"], correct: 2 }, 
+                    { t: "lesson", title: "Data Protection & Privacy Laws", text: "Understand GDPR (General Data Protection Regulation), CCPA (California Consumer Privacy Act), and other privacy frameworks. Learn about data subject rights, lawful basis for processing, data breach notification requirements, and penalties for non-compliance." }
+                ], 
+                questions: [
+                    { q: "What does MFA (Multi-Factor Authentication) stand for?", opts: ["Multiple File Access", "Multi-Factor Authentication", "Managed Firewall Admin", "Main Frame Accuracy"], c: 1 }, 
+                    { q: "Which password is considered STRONG according to best practices?", opts: ["YourName2024", "Tr0ub4dor&3 (12+ mixed characters)", "password", "EMP12345"], c: 1 }, 
+                    { q: "Which of the following is a 'Social Engineering' attack?", opts: ["SQL Injection", "Distributed Denial of Service (DDoS)", "Phishing phone call (Vishing)", "Brute force attack"], c: 2 },
+                    { q: "What is the principle of 'Least Privilege' in cybersecurity?", opts: ["Give everyone admin access", "Users should only have access needed for their job", "Restrict all access to everyone", "Only managers get privileges"], c: 1 },
+                    { q: "Under GDPR, what is the maximum time to report a data breach to authorities?", opts: ["24 hours", "72 hours", "1 week", "30 days"], c: 1 },
+                    { q: "What does the 'C' in the CIA triad stand for?", opts: ["Compliance", "Confidentiality", "Certification", "Cryptography"], c: 1 }
+                ], 
+                pass: 70 
+            },
+            { 
+                id: 3, 
+                title: "Customer Service Excellence", 
+                cat: "Soft Skills", 
+                level: "Beginner", 
+                icon: "💬", 
+                desc: "Master communication and build lasting customer relationships", 
+                dur: "2.5h", 
+                mods: 5, 
+                grad: "linear-gradient(135deg,#f59e0b,#ef4444)", 
+                content: [
+                    { t: "video", title: "Customer Service Mindset", text: "Develop a customer-centric approach by understanding customer expectations, building empathy, and recognizing that every interaction shapes brand perception. Learn the service-profit chain and how employee satisfaction drives customer loyalty.", vidId: "P-4I1V9I2m8" }, 
+                    { t: "lesson", title: "Active Listening Techniques", text: "Master the art of active listening through techniques like paraphrasing, asking clarifying questions, avoiding interruptions, and reading between the lines. Learn to identify customer needs even when they're not explicitly stated. Understand the 80/20 rule - listen 80% of the time, speak 20%." }, 
+                    { t: "lesson", title: "Handling Difficult Customers", text: "Learn de-escalation strategies including staying calm, acknowledging emotions, using positive language, and finding win-win solutions. Understand the HEAT technique (Hear, Empathize, Apologize, Take action) and when to escalate to a supervisor." }, 
+                    { t: "interactive", title: "Service Scenario", q: "A customer is loudly complaining about a defective product in front of other customers. What is your FIRST step?", opts: ["Ask them to leave the store", "Argue that it's not your fault", "Listen empathetically and acknowledge their frustration", "Immediately offer a refund"], correct: 2 },
+                    { t: "lesson", title: "Going the Extra Mile", text: "Discover how to exceed customer expectations through personalization, proactive communication, follow-up, and creating memorable experiences. Learn the difference between customer satisfaction and customer delight." }
+                ], 
+                questions: [
+                    { q: "What is 'The Golden Rule' in customer service?", opts: ["The customer is always right", "Treat others as you wish to be treated", "Always charge premium prices", "Work as fast as possible"], c: 1 }, 
+                    { q: "What does 'going the extra mile' mean in customer service?", opts: ["Only doing what's required", "Exceeding customer expectations", "Literally walking to customers", "Working overtime hours"], c: 1 }, 
+                    { q: "How should you respond to an angry customer?", opts: ["Get angry back", "Transfer them immediately", "Listen calmly and empathize", "Put them on hold indefinitely"], c: 2 },
+                    { q: "What percentage of communication should be LISTENING in customer service?", opts: ["20%", "50%", "80%", "100%"], c: 2 },
+                    { q: "What does the 'E' in the HEAT technique stand for?", opts: ["Escalate", "Empathize", "Explain", "Execute"], c: 1 }
+                ], 
+                pass: 60 
+            },
+            { 
+                id: 4, 
+                title: "Leadership & Team Management", 
+                cat: "Soft Skills", 
+                level: "Advanced", 
+                icon: "👥", 
+                desc: "Develop advanced leadership skills and team dynamics", 
+                dur: "4h", 
+                mods: 6, 
+                grad: "linear-gradient(135deg,#8b5cf6,#ec4899)", 
+                content: [
+                    { t: "video", title: "Leadership Styles & Theories", text: "Explore transformational leadership (inspiring change), servant leadership (prioritizing team needs), situational leadership (adapting to context), and authentic leadership. Understand when to use each style and how great leaders flex between approaches.", vidId: "4SwaW9v_Ew4" }, 
+                    { t: "lesson", title: "Building High-Performing Teams", text: "Master Tuckman's stages of team development: Forming (orientation), Storming (conflict), Norming (cohesion), Performing (productivity), and Adjourning (closure). Learn how to create psychological safety, establish team norms, and leverage diverse strengths." }, 
+                    { t: "lesson", title: "Effective Communication & Feedback", text: "Develop skills in clear communication, active listening, and delivering constructive feedback using the SBI model (Situation-Behavior-Impact). Learn to conduct effective one-on-ones, run productive meetings, and communicate vision compellingly." }, 
+                    { t: "interactive", title: "Leadership Scenario", q: "Your team is in the 'Storming' stage with conflicts emerging. Which stage comes NEXT if you manage it well?", opts: ["Forming", "Norming", "Performing", "Adjourning"], correct: 1 }, 
+                    { t: "lesson", title: "Conflict Resolution", text: "Learn the Thomas-Kilmann conflict modes (competing, collaborating, compromising, avoiding, accommodating) and when to use each. Master mediation techniques, interest-based negotiation, and turning conflict into opportunity." }, 
+                    { t: "lesson", title: "Delegation & Empowerment", text: "Understand the art of delegation - what to delegate, to whom, and how to provide autonomy without abandoning accountability. Learn to avoid micromanagement while maintaining oversight, and how to develop team members through stretch assignments." }
+                ], 
+                questions: [
+                    { q: "What is emotional intelligence in leadership?", opts: ["Being overly emotional", "Understanding and managing your own and others' emotions", "Avoiding all emotions", "Using only logic"], c: 1 }, 
+                    { q: "What is the primary purpose of delegation?", opts: ["To avoid doing work yourself", "To develop team capacity and empower others", "To shift blame for failures", "To appear busy"], c: 1 }, 
+                    { q: "What defines 'Servant Leadership'?", opts: ["Prioritizing the growth and well-being of team members", "Maintaining strict hierarchy", "Focusing only on profits", "Laissez-faire management"], c: 0 },
+                    { q: "In Tuckman's model, which stage involves the most conflict?", opts: ["Forming", "Storming", "Norming", "Performing"], c: 1 },
+                    { q: "What does 'psychological safety' in teams mean?", opts: ["Physical safety measures", "Feeling safe to take risks and be vulnerable", "Job security guarantees", "Safety training completion"], c: 1 },
+                    { q: "What does the 'I' in the SBI feedback model stand for?", opts: ["Intention", "Impact", "Improvement", "Implementation"], c: 1 }
+                ], 
+                pass: 75 
+            },
+            { 
+                id: 5, 
+                title: "Project Management Essentials", 
+                cat: "Business", 
+                level: "Intermediate", 
+                icon: "📊", 
+                desc: "Master project planning and execution methodologies", 
+                dur: "3.5h", 
+                mods: 6, 
+                grad: "linear-gradient(135deg,#06b6d4,#6366f1)", 
+                content: [
+                    { t: "video", title: "Project Management Fundamentals", text: "Understand the project lifecycle (Initiation, Planning, Execution, Monitoring & Controlling, Closing) and the PMBOK framework. Learn the triple constraint (scope, time, cost) and how to balance competing demands.", vidId: "fS_f7l1M7oU" }, 
+                    { t: "lesson", title: "Scope Definition & WBS", text: "Master scope definition using project charters and requirements gathering. Learn to create a Work Breakdown Structure (WBS) that decomposes deliverables into manageable work packages. Understand scope creep and how to manage change requests." }, 
+                    { t: "lesson", title: "Scheduling & Critical Path", text: "Learn to create project schedules using Gantt charts and network diagrams. Master the Critical Path Method (CPM) to identify the longest sequence of dependent activities. Understand float/slack and how to crash or fast-track schedules." }, 
+                    { t: "interactive", title: "PM Scenario", q: "What does the 'Critical Path' represent in project management?", opts: ["The cheapest route to completion", "The longest sequence of dependent activities", "The project manager's preferred tasks", "The backup contingency plan"], correct: 1 }, 
+                    { t: "lesson", title: "Risk Management", text: "Learn to identify, analyze, and respond to project risks using risk registers, probability-impact matrices, and risk response strategies (avoid, transfer, mitigate, accept). Understand the difference between risks and issues." },
+                    { t: "video", title: "Agile vs Waterfall Methodologies", text: "Compare traditional Waterfall (sequential, plan-driven) with Agile (iterative, adaptive) approaches. Learn about Scrum roles, sprints, daily standups, and when to use each methodology based on project characteristics." }
+                ], 
+                questions: [
+                    { q: "What is 'Scope Creep' in project management?", opts: ["A slow-moving project manager", "Uncontrolled changes or growth in project scope", "The final project deadline", "Having budget surplus"], c: 1 }, 
+                    { q: "The Critical Path is defined as:", opts: ["The most expensive path", "The longest sequence of dependent activities", "Only the PM's tasks", "The shortest route to completion"], c: 1 }, 
+                    { q: "What is an Agile 'sprint'?", opts: ["Running to meetings", "A time-boxed iteration (usually 1-4 weeks)", "An emergency situation", "The project kickoff"], c: 1 },
+                    { q: "What does WBS stand for?", opts: ["Work Breakdown Structure", "Weekly Business Summary", "Workflow Base System", "Work Budget Schedule"], c: 0 },
+                    { q: "Which is NOT part of the triple constraint?", opts: ["Scope", "Quality", "Time", "Cost"], c: 1 },
+                    { q: "What is the difference between a risk and an issue?", opts: ["No difference", "Risk is potential future problem, issue is current problem", "Issues are more serious", "Risks are always negative"], c: 1 }
+                ], 
+                pass: 70 
+            },
+            { 
+                id: 6, 
+                title: "Digital Marketing Fundamentals", 
+                cat: "Business", 
+                level: "Beginner", 
+                icon: "📱", 
+                desc: "Master SEO, social media, content strategy, and analytics", 
+                dur: "3h", 
+                mods: 5, 
+                grad: "linear-gradient(135deg,#ec4899,#ef4444)", 
+                content: [
+                    { t: "video", title: "Digital Marketing Landscape", text: "Explore the digital marketing ecosystem including channels (search, social, email, display), the customer journey (awareness, consideration, decision, retention), and how to create an integrated marketing strategy.", vidId: "nU-IIXBWlS4" }, 
+                    { t: "lesson", title: "Search Engine Optimization (SEO)", text: "Learn keyword research using tools like Google Keyword Planner, on-page SEO (title tags, meta descriptions, header tags, content optimization), off-page SEO (backlinks, domain authority), and technical SEO (site speed, mobile-friendliness, schema markup)." }, 
+                    { t: "lesson", title: "Social Media Marketing", text: "Develop platform-specific strategies for Facebook, Instagram, LinkedIn, Twitter, and TikTok. Learn content creation best practices, community management, influencer partnerships, and paid social advertising (targeting, bidding, creative optimization)." }, 
+                    { t: "interactive", title: "Marketing Metrics Quiz", q: "What does 'CTR' stand for in digital marketing?", opts: ["Count To Reach", "Click-Through Rate", "Cost To Return", "Channel Tracking Report"], correct: 1 }, 
+                    { t: "lesson", title: "Content Marketing & Analytics", text: "Master content strategy including blog posts, videos, infographics, and lead magnets. Learn to use Google Analytics to track traffic sources, user behavior, conversion funnels, and ROI. Understand key metrics like bounce rate, session duration, and conversion rate." }
+                ], 
+                questions: [
+                    { q: "What does SEO stand for?", opts: ["Social Engagement Optimization", "Search Engine Optimization", "Sales Enhancement Operation", "Site Enhancement Optimization"], c: 1 }, 
+                    { q: "A 'conversion' in digital marketing refers to:", opts: ["Changing website design", "A desired user action (purchase, signup, etc.)", "File format conversion", "Switching platforms"], c: 1 }, 
+                    { q: "Which tool is primarily used for web analytics?", opts: ["Adobe Photoshop", "Google Search Console", "Google Analytics", "Visual Studio Code"], c: 2 },
+                    { q: "What is 'organic' traffic?", opts: ["Traffic from paid ads", "Unpaid traffic from search engines", "Traffic from social media", "Direct website visits"], c: 1 },
+                    { q: "What does a high 'bounce rate' indicate?", opts: ["Great engagement", "Visitors leave quickly without interacting", "High conversion rate", "Lots of page views"], c: 1 }
+                ], 
+                pass: 65 
+            },
+            { 
+                id: 7, 
+                title: "Financial Literacy", 
+                cat: "Business", 
+                level: "Intermediate", 
+                icon: "💰", 
+                desc: "Understand financial statements, budgeting, and investments", 
+                dur: "3h", 
+                mods: 6, 
+                grad: "linear-gradient(135deg,#10b981,#f59e0b)", 
+                content: [
+                    { t: "video", title: "Financial Literacy Foundations", text: "Build a strong foundation in financial concepts including assets vs liabilities, income vs expenses, cash flow, net worth, and the time value of money. Understand financial goal setting and the importance of financial planning.", vidId: "5q29XmN0K2k" }, 
+                    { t: "lesson", title: "Reading Financial Statements", text: "Master the three core financial statements: Income Statement (revenue, expenses, profit), Balance Sheet (assets, liabilities, equity), and Cash Flow Statement (operating, investing, financing activities). Learn financial ratios like current ratio, debt-to-equity, and profit margin." }, 
+                    { t: "lesson", title: "Budgeting & Forecasting", text: "Learn to create personal and business budgets using the 50/30/20 rule or zero-based budgeting. Understand variance analysis, forecasting techniques, and how to adjust budgets based on changing circumstances." }, 
+                    { t: "interactive", title: "Finance Formula Quiz", q: "Assets minus Liabilities equals:", opts: ["Profit", "Equity (Net Worth)", "Revenue", "Expenses"], correct: 1 }, 
+                    { t: "lesson", title: "Investment Fundamentals", text: "Explore investment vehicles including stocks, bonds, mutual funds, ETFs, and real estate. Understand risk vs return, diversification, asset allocation, and the power of compound interest. Learn about retirement accounts (401k, IRA) and tax-advantaged investing." },
+                    { t: "lesson", title: "Credit & Debt Management", text: "Understand credit scores, interest rates (APR), good debt vs bad debt, and strategies for debt repayment (avalanche vs snowball methods). Learn about credit cards, loans, and how to build and maintain good credit." }
+                ], 
+                questions: [
+                    { q: "What is the difference between Revenue and Profit?", opts: ["They're the same thing", "Profit is Revenue minus Expenses", "Profit is always higher", "Revenue is cash only"], c: 1 }, 
+                    { q: "What is compound interest?", opts: ["Interest calculated once", "Interest earned on both principal and accumulated interest", "Interest paid by companies", "A complex calculation"], c: 1 }, 
+                    { q: "A Balance Sheet displays:", opts: ["Revenue only", "Assets, Liabilities, and Equity", "Daily transactions", "Payroll information"], c: 1 },
+                    { q: "What does ROI stand for?", opts: ["Rate of Inflation", "Return on Investment", "Revenue Operating Income", "Risk Opportunity Index"], c: 1 },
+                    { q: "Diversification in investing means:", opts: ["Putting all money in one stock", "Spreading investments across different assets", "Only investing in bonds", "Avoiding all risk"], c: 1 },
+                    { q: "What is a 'liability' in accounting?", opts: ["An asset you own", "A debt or obligation you owe", "Your income", "Your profit"], c: 1 }
+                ], 
+                pass: 70 
+            },
+            { 
+                id: 8, 
+                title: "Cloud Computing Basics", 
+                cat: "Technology", 
+                level: "Beginner", 
+                icon: "☁️", 
+                desc: "Understand cloud services, AWS, Azure, and deployment models", 
+                dur: "2.5h", 
+                mods: 5, 
+                grad: "linear-gradient(135deg,#6366f1,#06b6d4)", 
+                content: [
+                    { t: "video", title: "Introduction to Cloud Computing", text: "Understand cloud fundamentals including on-demand self-service, broad network access, resource pooling, rapid elasticity, and measured service. Learn the differences between IaaS (Infrastructure), PaaS (Platform), and SaaS (Software) service models.", vidId: "mxT233EdY5c" }, 
+                    { t: "lesson", title: "Cloud Deployment Models", text: "Explore Public Cloud (AWS, Azure, GCP - shared infrastructure), Private Cloud (dedicated infrastructure), Hybrid Cloud (combination of public and private), and Multi-Cloud strategies. Understand the benefits and use cases for each model." }, 
+                    { t: "lesson", title: "Major Cloud Providers", text: "Compare the big three cloud providers: Amazon Web Services (AWS) with services like EC2, S3, Lambda; Microsoft Azure with Virtual Machines, Blob Storage, Functions; and Google Cloud Platform (GCP) with Compute Engine, Cloud Storage, Cloud Functions." }, 
+                    { t: "interactive", title: "Cloud Model Quiz", q: "Microsoft Office 365 is an example of which cloud service model?", opts: ["IaaS (Infrastructure as a Service)", "PaaS (Platform as a Service)", "SaaS (Software as a Service)", "DBaaS (Database as a Service)"], correct: 2 },
+                    { t: "lesson", title: "Cloud Security & Best Practices", text: "Learn the shared responsibility model (cloud provider secures infrastructure, customer secures data and applications), encryption at rest and in transit, Identity and Access Management (IAM), Virtual Private Clouds (VPC), and compliance certifications (SOC 2, ISO 27001)." }
+                ], 
+                questions: [
+                    { q: "What is the main benefit of cloud computing?", opts: ["It's always cheaper than on-premise", "Scalability and flexibility", "No security measures needed", "Only for large companies"], c: 1 }, 
+                    { q: "A hybrid cloud is:", opts: ["Using multiple public clouds", "Combination of public and private cloud", "Frequently changing cloud providers", "Using different operating systems"], c: 1 }, 
+                    { q: "What does AWS stand for?", opts: ["Apple Web Services", "Amazon Web Services", "Advanced Web Storage", "Alternative Web System"], c: 1 },
+                    { q: "In the shared responsibility model, who is responsible for data security?", opts: ["Only the cloud provider", "Only the customer", "Both provider and customer share responsibility", "Third-party auditors"], c: 2 },
+                    { q: "Which is an example of IaaS?", opts: ["Gmail", "Salesforce", "Amazon EC2 (Virtual Machines)", "Microsoft Office 365"], c: 2 }
+                ], 
+                pass: 65 
+            },
+            { 
+                id: 9, 
+                title: "Time Management & Productivity", 
+                cat: "Soft Skills", 
+                level: "Beginner", 
+                icon: "⏰", 
+                desc: "Master time management techniques and productivity strategies", 
+                dur: "2h", 
+                mods: 5, 
+                grad: "linear-gradient(135deg,#8b5cf6,#6366f1)", 
+                content: [
+                    { t: "video", title: "The Science of Productivity", text: "Understand how your brain works including energy management, circadian rhythms, the myth of multitasking, and the power of focus. Learn about decision fatigue, willpower depletion, and how to structure your day for peak performance.", vidId: "iONDebHX9qk" }, 
+                    { t: "lesson", title: "Prioritization Frameworks", text: "Master the Eisenhower Matrix (Urgent/Important quadrants), ABC Method (ranking by importance), ABCDE technique, and the 80/20 Pareto Principle. Learn to distinguish between urgent and important tasks and focus on high-impact activities." }, 
+                    { t: "interactive", title: "Priority Matrix Quiz", q: "In the Eisenhower Matrix, Urgent + Important tasks belong in which quadrant?", opts: ["Quadrant 1 (Do First)", "Quadrant 2 (Schedule)", "Quadrant 3 (Delegate)", "Quadrant 4 (Eliminate)"], correct: 0 }, 
+                    { t: "lesson", title: "Productivity Techniques", text: "Learn the Pomodoro Technique (25-minute focused work intervals), time blocking (scheduling specific tasks), task batching (grouping similar activities), the Two-Minute Rule (do it now if it takes less than 2 minutes), and Eat That Frog (tackle hardest task first)." },
+                    { t: "lesson", title: "Overcoming Procrastination", text: "Understand the psychology of procrastination, identify your procrastination triggers, and learn strategies to overcome it including breaking tasks into smaller steps, using implementation intentions, and the 5-second rule." }
+                ], 
+                questions: [
+                    { q: "What is the Pomodoro Technique?", opts: ["A cooking method", "Working in 25-minute focused intervals", "A project management tool", "A type of calendar system"], c: 1 }, 
+                    { q: "Time blocking means:", opts: ["Blocking distracting websites", "Scheduling specific time slots for specific tasks", "Preventing others from scheduling meetings", "Having no schedule at all"], c: 1 }, 
+                    { q: "'Eat That Frog' refers to:", opts: ["A healthy breakfast habit", "Doing your hardest/most important task first", "Avoiding difficult work", "A time management app"], c: 1 },
+                    { q: "What does the 80/20 Pareto Principle suggest?", opts: ["Work 80 hours per week", "80% of results come from 20% of efforts", "Take breaks 80% of the time", "20% of people are productive"], c: 1 },
+                    { q: "Which quadrant in the Eisenhower Matrix should you focus on most?", opts: ["Quadrant 1 (Urgent & Important)", "Quadrant 2 (Not Urgent but Important)", "Quadrant 3 (Urgent but Not Important)", "Quadrant 4 (Not Urgent & Not Important)"], c: 1 }
+                ], 
+                pass: 60 
+            },
+            { 
+                id: 10, 
+                title: "Diversity & Inclusion", 
+                cat: "Compliance", 
+                level: "Beginner", 
+                icon: "🌈", 
+                desc: "Build inclusive workplaces through understanding diversity", 
+                dur: "2.5h", 
+                mods: 5, 
+                grad: "linear-gradient(135deg,#ec4899,#8b5cf6)", 
+                content: [
+                    { t: "video", title: "Understanding Diversity & Inclusion", text: "Learn the difference between diversity (the mix of people) and inclusion (making the mix work). Explore dimensions of diversity including race, ethnicity, gender, age, disability, sexual orientation, religion, and socioeconomic background. Understand the business case for D&I.", vidId: "kvdHqS3ryw0" }, 
+                    { t: "lesson", title: "Unconscious Bias", text: "Recognize types of unconscious bias including affinity bias (favoring people like us), confirmation bias (seeking information that confirms beliefs), halo effect (one positive trait influences overall perception), and attribution bias. Learn strategies to mitigate bias in hiring, promotion, and daily interactions." }, 
+                    { t: "interactive", title: "Bias Recognition Quiz", q: "Which of the following is a form of unconscious bias?", opts: ["Open hostility and discrimination", "Affinity bias (preferring people similar to you)", "Logical analytical thinking", "Providing direct constructive feedback"], correct: 1 }, 
+                    { t: "lesson", title: "Creating Inclusive Environments", text: "Master inclusive communication including using gender-neutral language, respecting pronouns, avoiding microaggressions, and creating psychologically safe spaces. Learn about active allyship, speaking up against discrimination, and amplifying marginalized voices." },
+                    { t: "lesson", title: "Equity vs Equality", text: "Understand the critical difference between equality (treating everyone the same) and equity (providing resources based on individual needs to achieve fair outcomes). Learn about systemic barriers and how to create equitable policies and practices." }
+                ], 
+                questions: [
+                    { q: "What is the difference between Diversity and Inclusion?", opts: ["They're the same thing", "Diversity is the mix, inclusion is making the mix work", "Diversity only refers to gender", "Inclusion is less important"], c: 1 }, 
+                    { q: "Which is an example of inclusive language?", opts: ["Using 'guys' for everyone", "Using gender-neutral terms like 'team' or 'everyone'", "Only using formal titles", "Avoiding all pronouns"], c: 1 }, 
+                    { q: "What is 'Equity' in the context of D&I?", opts: ["Same as equality", "Giving everyone exactly the same thing", "Fairness based on individual needs and circumstances", "Company stock ownership"], c: 2 },
+                    { q: "What is a 'microaggression'?", opts: ["A small physical fight", "Subtle, often unintentional discriminatory comments or actions", "Minor workplace disagreement", "A management technique"], c: 1 },
+                    { q: "What does being an 'ally' mean in D&I?", opts: ["Being friends with everyone", "Actively supporting and advocating for marginalized groups", "Staying neutral in all situations", "Only supporting your own group"], c: 1 }
+                ], 
+                pass: 65 
+            },
+            { 
+                id: 11, 
+                title: "Communication Skills", 
+                cat: "Soft Skills", 
+                level: "Intermediate", 
+                icon: "🗣️", 
+                desc: "Master presentation, negotiation, and interpersonal communication", 
+                dur: "3h", 
+                mods: 6, 
+                grad: "linear-gradient(135deg,#f59e0b,#10b981)", 
+                content: [
+                    { t: "video", title: "Communication Fundamentals", text: "Understand the communication process (sender, message, channel, receiver, feedback), common barriers (noise, assumptions, cultural differences), and the importance of audience awareness. Learn about high-context vs low-context communication styles.", vidId: "HAnw168huqA" }, 
+                    { t: "lesson", title: "Verbal & Non-Verbal Communication", text: "Master verbal communication including tone, pace, volume, and word choice. Understand non-verbal cues: body language (posture, gestures), facial expressions, eye contact, and personal space. Learn that 55% of communication is body language, 38% is tone, and only 7% is words." }, 
+                    { t: "lesson", title: "Presentation Skills", text: "Learn to structure compelling presentations using the rule of three, storytelling techniques, and clear opening/closing. Master slide design principles, vocal variety, managing nervousness, engaging audiences, and handling Q&A sessions effectively." }, 
+                    { t: "interactive", title: "Communication Technique Quiz", q: "Mirroring someone's body language during a conversation builds:", opts: ["Confusion and distrust", "Rapport and connection", "Suspicion", "Boredom"], correct: 1 }, 
+                    { t: "lesson", title: "Active Listening & Empathy", text: "Develop deep listening skills including paraphrasing, asking open-ended questions, avoiding interruptions, and reading emotional subtext. Learn to practice empathy by putting yourself in others' shoes and validating their feelings." },
+                    { t: "video", title: "Negotiation & Persuasion", text: "Master win-win negotiation tactics, understand BATNA (Best Alternative To Negotiated Agreement), learn Cialdini's principles of persuasion (reciprocity, commitment, social proof, authority, liking, scarcity), and practice principled negotiation focusing on interests not positions." }
+                ], 
+                questions: [
+                    { q: "What is active listening?", opts: ["Waiting for your turn to speak", "Fully concentrating on and understanding the speaker", "Listening while multitasking", "Agreeing with everything said"], c: 1 }, 
+                    { q: "In negotiation, what does BATNA stand for?", opts: ["Best Alternative To Negotiated Agreement", "Basic Agreement Terms and Negotiations", "Budget Allocation Through Negotiated Agreements", "Business Analysis Tool for Negotiations"], c: 0 }, 
+                    { q: "High-context communication relies heavily on:", opts: ["Only the words spoken", "Tone, environment, and implicit cues", "Loud and clear speaking", "Email and written communication only"], c: 1 },
+                    { q: "What percentage of communication is estimated to be non-verbal?", opts: ["7%", "38%", "55-93%", "100%"], c: 2 },
+                    { q: "Which is a principle of persuasion according to Cialdini?", opts: ["Manipulation", "Scarcity", "Deception", "Aggression"], c: 1 },
+                    { q: "In presentations, what is the 'rule of three'?", opts: ["Speak for 3 minutes", "Have 3 speakers", "Information in groups of three is more memorable", "Use 3 slides maximum"], c: 2 }
+                ], 
+                pass: 70 
+            },
+            { 
+                id: 12, 
+                title: "Ethics & Corporate Governance", 
+                cat: "Compliance", 
+                level: "Intermediate", 
+                icon: "⚖️", 
+                desc: "Navigate business ethics and ethical decision-making", 
+                dur: "2.5h", 
+                mods: 5, 
+                grad: "linear-gradient(135deg,#06b6d4,#10b981)", 
+                content: [
+                    { t: "video", title: "Business Ethics Foundations", text: "Explore ethical principles including integrity, honesty, fairness, respect, and responsibility. Understand stakeholder theory, the difference between legal and ethical, and how to navigate ethical dilemmas using frameworks like the Ethics Triangle (Is it legal? Is it balanced? How does it make me feel?).", vidId: "GAn9p0p2f-c" }, 
+                    { t: "lesson", title: "Ethical Decision-Making Frameworks", text: "Learn structured approaches to ethical decisions including the Utilitarian approach (greatest good for greatest number), Rights approach (respecting human dignity), Justice approach (treating equals equally), Common Good approach, and Virtue approach (acting with integrity)." }, 
+                    { t: "interactive", title: "Ethics Scenario", q: "An ethical dilemma typically features:", opts: ["One clear right choice", "Conflict between two or more values", "Only bad choices", "Only legal issues"], correct: 1 }, 
+                    { t: "lesson", title: "Corporate Governance", text: "Understand the role of boards of directors, fiduciary duties, shareholder vs stakeholder models, transparency and accountability, internal controls, and compliance programs. Learn about corporate scandals (Enron, WorldCom) and lessons learned." },
+                    { t: "lesson", title: "Corporate Social Responsibility (CSR)", text: "Explore CSR including environmental sustainability (ESG - Environmental, Social, Governance), community engagement, ethical supply chains, and the triple bottom line (people, planet, profit). Understand how CSR impacts brand reputation and long-term success." }
+                ], 
+                questions: [
+                    { q: "What is a conflict of interest?", opts: ["A workplace disagreement", "When personal interests could influence professional decisions", "Having different opinions", "Competition between companies"], c: 1 }, 
+                    { q: "Whistleblowing refers to:", opts: ["Making loud noises at work", "Reporting unethical or illegal activities", "Workplace gossiping", "Quitting your job dramatically"], c: 1 }, 
+                    { q: "Corporate governance ensures:", opts: ["Maximum profits only", "Accountability and transparency", "Employee social events", "Stock market success"], c: 1 },
+                    { q: "What does ESG stand for in CSR?", opts: ["Economic, Social, Governance", "Environmental, Social, Governance", "Ethical, Sustainable, Growth", "Employee, Stakeholder, Government"], c: 1 },
+                    { q: "The 'triple bottom line' refers to:", opts: ["Three profit sources", "People, Planet, Profit", "Three management levels", "Three financial statements"], c: 1 },
+                    { q: "What is a fiduciary duty?", opts: ["Paying fees on time", "Legal obligation to act in another's best interest", "Filing documents", "Financial reporting"], c: 1 }
+                ], 
+                pass: 70 
+            }
+        ];
+
+        let currentUser = null, currentCourse = null, userProgress = {};
+
+        function init() {
+            loadProgress();
+            if (currentUser) {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                updateUserDisplay();
+                loadDashboard();
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const id = document.getElementById('employeeId').value.trim();
+            const name = document.getElementById('employeeName').value.trim();
+            if (id && name) {
+                currentUser = { id, name };
+                if (!userProgress[id]) userProgress[id] = {};
+                saveProgress();
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                updateUserDisplay();
+                loadDashboard();
+                applyTheme(); // Ensure theme is applied on login
+            }
+        });
+
+        function updateUserDisplay() {
+            const initials = currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            document.getElementById('userAvatar').textContent = initials;
+            document.getElementById('userName').textContent = currentUser.name;
+
+            // Gamification Info
+            const up = userProgress[currentUser.id] || {};
+            const xp = up.points || 0;
+            const level = Math.floor(xp / 1000) + 1;
+            const currentXP = xp % 1000;
+            const xpPct = (currentXP / 1000) * 100;
+
+            // Update Sidebar Footer Card
+            document.getElementById('footerAvatar').textContent = initials;
+            document.getElementById('footerName').textContent = currentUser.name;
+            document.getElementById('footerId').textContent = currentUser.id;
+            
+            // Add level badge to footer
+            const footerInfo = document.querySelector('.user-info-mini');
+            if (footerInfo && !document.getElementById('levelBadge')) {
+                const badge = document.createElement('div');
+                badge.id = 'levelBadge';
+                badge.style = "font-size: 10px; background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px;";
+                badge.textContent = 'LVL ' + level;
+                footerInfo.appendChild(badge);
+            } else if (document.getElementById('levelBadge')) {
+                document.getElementById('levelBadge').textContent = 'LVL ' + level;
+            }
+
+            // Update Profile Page
+            const profileName = document.getElementById('profileName');
+            if (profileName) profileName.textContent = currentUser.name;
+            const profileId = document.getElementById('profileId');
+            if (profileId) profileId.textContent = 'ID: ' + currentUser.id + ' | Level ' + level + ' | ' + xp + ' XP';
+            const profileAvatarBig = document.getElementById('profileAvatarBig');
+            if (profileAvatarBig) profileAvatarBig.textContent = initials;
+            
+            // Update Dashboard XP Bar
+            const dashLevel = document.getElementById('dashLevel');
+            if (dashLevel) dashLevel.textContent = level;
+            const dashXPFill = document.getElementById('dashXPFill');
+            if (dashXPFill) dashXPFill.style.width = xpPct + '%';
+            const dashXPText = document.getElementById('dashXPText');
+            if (dashXPText) dashXPText.textContent = `${currentXP} / 1000 XP`;
+        }
+
+        function logout() {
+            if (confirm('Logout?')) {
+                saveProgress();
+                currentUser = null;
+                document.getElementById('loginForm').reset();
+                document.getElementById('mainApp').classList.add('hidden');
+                document.getElementById('loginPage').classList.remove('hidden');
+            }
+        }
+
+        function loadDashboard() {
+            updateStats();
+            loadCourses();
+        }
+
+        function updateStats() {
+            const p = userProgress[currentUser.id] || {};
+            let comp = 0, prog = 0, cert = 0;
+            courses.forEach(c => {
+                const cp = p[c.id];
+                if (cp) {
+                    if (cp.completed) { comp++; cert++; }
+                    else if (cp.modsCompleted > 0) prog++;
+                }
+            });
+            document.getElementById('totalCourses').textContent = courses.length;
+            document.getElementById('completedCourses').textContent = comp;
+            document.getElementById('inProgressCourses').textContent = prog;
+            document.getElementById('certificatesEarned').textContent = cert;
+        }
+
+        function loadCourses(filter = '') {
+            const grid = document.getElementById('courseGrid');
+            grid.innerHTML = '';
+            const filteredCourses = courses.filter(c =>
+                c.title.toLowerCase().includes(filter.toLowerCase()) ||
+                c.cat.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filteredCourses.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--gray);">No courses found matching your search.</div>';
+                return;
+            }
+
+            filteredCourses.forEach(c => {
+                const p = getCourseProgress(c.id);
+                const isFav = (currentUser.favorites || []).includes(c.id);
+                let status = 'status-not-started', statusTxt = 'Not Started';
+                if (p.completed) { status = 'status-completed'; statusTxt = 'Completed'; }
+                else if (p.modsCompleted > 0) { status = 'status-in-progress'; statusTxt = 'In Progress'; }
+                const card = document.createElement('div');
+                card.className = 'course-card';
+                card.innerHTML = `
+                    <div class="course-header" style="background:${c.grad}">
+                        <div style="font-size:72px;">${c.icon}</div>
+                        <button class="fav-btn ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); toggleBookmark(${c.id})">
+                            <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="course-body">
+                        <div class="course-category">${c.cat}</div>
+                        <h3 class="course-title">${c.title}</h3>
+                        <p class="course-description">${c.desc}</p>
+                        <div class="course-meta">
+                            <span>⏱️ ${c.dur}</span>
+                            <span>📖 ${c.mods} modules</span>
+                            <span class="course-status ${status}">${statusTxt}</span>
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => openCourse(c.id);
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleBookmark(id) {
+            if (!currentUser.favorites) currentUser.favorites = [];
+            const idx = currentUser.favorites.indexOf(id);
+            if (idx === -1) {
+                currentUser.favorites.push(id);
+                showNotification('Course added to favorites!');
+            } else {
+                currentUser.favorites.splice(idx, 1);
+            }
+            saveProgress();
+            loadCourses();
+        }
+
+        function filterCourses(val) {
+            loadCourses(val);
+        }
+
+        function openCourse(id) {
+            currentCourse = courses.find(c => c.id === id);
+            document.getElementById('detailTitle').textContent = currentCourse.title;
+            document.getElementById('detailDescription').textContent = currentCourse.desc + '. Duration: ' + currentCourse.dur + ' | ' + currentCourse.mods + ' modules | ' + currentCourse.level;
+            loadLearning();
+            updateProgress();
+            showPage('courseDetailPage');
+        }
+
+        function showNotifications() {
+            if (!currentUser.activity || currentUser.activity.length === 0) {
+                showNotification('No new notifications');
+            } else {
+                showNotification(`Latest: ${currentUser.activity[0].text}`);
+            }
+        }
+
+        function loadLearning() {
+            const cont = document.getElementById('learningContainer');
+            cont.innerHTML = '';
+            const p = getCourseProgress(currentCourse.id);
+            const comp = p.modsCompleted || 0;
+            currentCourse.content.forEach((m, i) => {
+                const isDone = i < comp, isCurr = i === comp, isLock = i > comp;
+                const card = document.createElement('div');
+                card.className = `learning-card ${isDone ? 'completed' : ''} ${isCurr ? 'active' : ''}`;
+                let html = `<h3 class="learning-title">${isDone ? '✅' : isLock ? '🔒' : (i + 1)}. ${m.title} ${m.t === 'video' ? '🎥' : m.t === 'interactive' ? '🎯' : '📖'}</h3>`;
+                
+                if (m.t === 'video') {
+                    if (m.vidId) {
+                        html += `<div class="video-player" style="background: black;">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${m.vidId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 12px;"></iframe>
+                        </div>`;
+                    } else {
+                        html += `<div class="video-player"><button class="play-btn">▶</button></div>`;
+                    }
+                }
+                
+                html += `<div class="learning-content">${m.text}</div>`;
+                if (m.t === 'interactive' && !isLock) {
+                    html += `<div><strong>${m.q}</strong><div style="margin-top:12px;">`;
+                    m.opts.forEach((o, oi) => html += `<div class="option-label" onclick="selectQuiz(${i},${oi},${m.correct})">${o}</div>`);
+                    html += `</div></div>`;
+                }
+                if (!isDone && !isLock) html += `<button class="btn-complete" onclick="completeMod(${i})">Complete Module</button>`;
+                card.innerHTML = html;
+                cont.appendChild(card);
+            });
+            const btn = document.getElementById('startTestBtn');
+            if (comp >= currentCourse.content.length && !p.completed) btn.classList.remove('hidden');
+            else btn.classList.add('hidden');
+        }
+
+        function selectQuiz(mid, sel, corr) {
+            event.target.style.background = sel === corr ? '#d1fae5' : '#fee2e2';
+            event.target.style.borderColor = sel === corr ? 'var(--success)' : 'var(--danger)';
+            event.target.style.pointerEvents = 'none';
+        }
+
+        function completeMod(i) {
+            const p = getCourseProgress(currentCourse.id);
+            if (p.modsCompleted <= i) {
+                p.modsCompleted = i + 1;
+                // Award XP
+                const up = userProgress[currentUser.id];
+                up.points = (up.points || 0) + 150; // 150 XP per module
+                saveCourseProgress(currentCourse.id, p);
+                loadLearning();
+                updateProgress();
+                updateUserDisplay();
+                showNotification('Module completed! +150 XP');
+            }
+        }
+
+        function showNotification(msg) {
+            const toast = document.createElement('div');
+            toast.style = "position: fixed; bottom: 32px; right: 32px; background: var(--dark); color: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 10000; animation: slideIn 0.3s forwards;";
+            toast.innerHTML = `<i class="fas fa-check-circle" style="color: var(--success); margin-right: 10px;"></i> ${msg}`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = "slideOut 0.3s forwards";
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Add CSS for toast animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+            @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+        `;
+        document.head.appendChild(style);
+
+        function updateProgress() {
+            const p = getCourseProgress(currentCourse.id);
+            const pct = Math.round(((p.modsCompleted || 0) / currentCourse.content.length) * 100);
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressPercentage').textContent = pct + '%';
+        }
+
+        function startTest() {
+            const cont = document.getElementById('questionsContainer');
+            cont.innerHTML = '';
+            currentCourse.questions.forEach((q, i) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                let html = `<div class="question-number">Question ${i + 1}</div><div class="question-text">${q.q}</div><div>`;
+                q.opts.forEach((o, oi) => html += `<label class="option-label" onclick="selectOpt(${i},${oi})"><input type="radio" name="q${i}" value="${oi}" style="margin-right:12px;">${o}</label>`);
+                html += `</div>`;
+                card.innerHTML = html;
+                cont.appendChild(card);
+            });
+            showPage('testPage');
+        }
+
+        function selectOpt(qi, oi) {
+            document.querySelectorAll(`input[name="q${qi}"]`).forEach(r => r.parentElement.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+
+        function submitTest() {
+            const ans = [];
+            currentCourse.questions.forEach((q, i) => {
+                const sel = document.querySelector(`input[name="q${i}"]:checked`);
+                ans.push(sel ? parseInt(sel.value) : -1);
+            });
+            if (ans.includes(-1)) { alert('Answer all questions!'); return; }
+            let corr = 0;
+            currentCourse.questions.forEach((q, i) => { if (ans[i] === q.c) corr++; });
+            const score = Math.round((corr / currentCourse.questions.length) * 100);
+            const pass = score >= currentCourse.pass;
+            const p = getCourseProgress(currentCourse.id);
+            p.score = score; p.completed = pass; p.testDate = new Date().toLocaleDateString();
+            
+            if (pass && !p.alreadyAwarded) {
+                const up = userProgress[currentUser.id];
+                up.points = (up.points || 0) + 1000; // 1000 XP for passing test
+                p.alreadyAwarded = true;
+                logActivity(`Earned Certificate: ${currentCourse.title}`);
+                showNotification('Course Passed! +1000 XP');
+            }
+
+            saveCourseProgress(currentCourse.id, p);
+            showResults(score, pass);
+            updateUserDisplay();
+        }
+
+        function logActivity(text) {
+            if (!currentUser.activity) currentUser.activity = [];
+            currentUser.activity.unshift({ text, date: new Date().toLocaleString() });
+            if (currentUser.activity.length > 10) currentUser.activity.pop();
+            saveProgress();
+        }
+
+        function showResults(score, pass, isViewOnly = false) {
+            document.getElementById('resultsIcon').textContent = pass ? '🎉' : '😔';
+            document.getElementById('resultsScore').textContent = score + '%';
+            document.getElementById('resultsScore').className = 'results-score ' + (pass ? 'pass' : 'fail');
+            document.getElementById('resultsMessage').textContent = pass ? 'Congratulations!' : 'Keep Trying!';
+            document.getElementById('resultsSubmessage').textContent = pass ? 'You earned your certificate!' : 'Need ' + currentCourse.pass + '% to pass';
+            
+            const resultsCard = document.querySelector('.results-card');
+            if (isViewOnly) {
+                resultsCard.classList.add('hidden');
+            } else {
+                resultsCard.classList.remove('hidden');
+            }
+
+            if (pass) {
+                document.getElementById('certificateContainer').classList.remove('hidden');
+                document.getElementById('retakeBtn').classList.add('hidden');
+                document.getElementById('certName').textContent = currentUser.name;
+                document.getElementById('certCourse').textContent = currentCourse.title;
+                document.getElementById('certScore').textContent = score + '%';
+                document.getElementById('certDate').textContent = new Date().toLocaleDateString();
+                document.getElementById('certEmpId').textContent = currentUser.id;
+            } else {
+                document.getElementById('certificateContainer').classList.add('hidden');
+                document.getElementById('retakeBtn').classList.remove('hidden');
+            }
+            showPage('resultsPage');
+            updateStats();
+            
+            if (pass) {
+                setTimeout(() => {
+                    document.getElementById('certificateContainer').scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
+        }
+
+        function retakeTest() { startTest(); }
+
+        async function downloadCertificate() {
+            const { jsPDF } = window.jspdf;
+            const cert = document.getElementById('certificateContent');
+            try {
+                const btn = event.target;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                btn.disabled = true;
+                const canvas = await html2canvas(cert, { 
+                    scale: 3, 
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    logging: false
+                });
+                const img = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({ 
+                    orientation: 'landscape', 
+                    unit: 'mm', 
+                    format: 'a4' 
+                });
+                const pdfWidth = 297;
+                const pdfHeight = 210;
+                const imgWidth = pdfWidth;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                // Center vertically if image is shorter than page
+                const yPos = (pdfHeight - imgHeight) / 2;
+                
+                pdf.addImage(img, 'PNG', 0, yPos > 0 ? yPos : 0, imgWidth, imgHeight);
+                pdf.save(`Certificate-${currentCourse.title.replace(/\s+/g, '-')}-${currentUser.name.replace(/\s+/g, '-')}.pdf`);
+                btn.innerHTML = '<i class="fas fa-download"></i> Download Official Certificate';
+                btn.disabled = false;
+            } catch (e) {
+                alert('Error generating PDF. Try print instead.');
+                console.error(e);
+            }
+        }
+
+        function showPage(p) {
+            const pages = ['dashboardPage', 'courseDetailPage', 'testPage', 'resultsPage', 'profilePage', 'certificatesPage', 'settingsPage'];
+            pages.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+            const targetPage = document.getElementById(p);
+            if (targetPage) targetPage.classList.remove('hidden');
+
+            // Update Active Nav Link
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            const navId = 'nav-' + p.replace('Page', '');
+            const activeNav = document.getElementById(navId);
+            if (activeNav) activeNav.classList.add('active');
+
+            // Close sidebar on mobile after selection
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                if (overlay) overlay.classList.remove('active');
+            }
+
+            window.scrollTo(0, 0);
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) sidebar.classList.toggle('open');
+            if (overlay) overlay.classList.toggle('active');
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.body.classList.toggle('dark-theme');
+            const icon = document.getElementById('themeIcon');
+            if (icon) {
+                icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            }
+            localStorage.setItem('academyProTheme', isDark ? 'dark' : 'light');
+        }
+
+        function applyTheme() {
+            const savedTheme = localStorage.getItem('academyProTheme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Priority: 1. Saved preference, 2. System preference
+            const isDark = savedTheme ? savedTheme === 'dark' : systemPrefersDark;
+
+            if (isDark) {
+                document.body.classList.add('dark-theme');
+                const icon = document.getElementById('themeIcon');
+                if (icon) icon.className = 'fas fa-sun';
+            } else {
+                document.body.classList.remove('dark-theme');
+                const icon = document.getElementById('themeIcon');
+                if (icon) icon.className = 'fas fa-moon';
+            }
+
+            // Listen for system theme changes if no manual override
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (!localStorage.getItem('academyProTheme')) {
+                    if (e.matches) {
+                        document.body.classList.add('dark-theme');
+                        if (document.getElementById('themeIcon')) document.getElementById('themeIcon').className = 'fas fa-sun';
+                    } else {
+                        document.body.classList.remove('dark-theme');
+                        if (document.getElementById('themeIcon')) document.getElementById('themeIcon').className = 'fas fa-moon';
+                    }
+                }
+            });
+        }
+
+        function showProfile() { 
+            showPage('profilePage'); 
+            updateUserDisplay(); 
+            const log = document.getElementById('activityLog');
+            log.innerHTML = '';
+            if (!currentUser.activity || currentUser.activity.length === 0) {
+                log.innerHTML = '<div style="color: var(--gray); font-style: italic;">No recent activity. Start learning!</div>';
+            } else {
+                currentUser.activity.forEach(a => {
+                    const item = document.createElement('div');
+                    item.style = "padding: 16px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;";
+                    item.innerHTML = `
+                        <div style="font-weight: 600;">${a.text}</div>
+                        <div style="color: var(--gray); font-size: 12px;">${a.date}</div>
+                    `;
+                    log.appendChild(item);
+                });
+            }
+        }
+
+        function showCertificates() {
+            showPage('certificatesPage');
+            const grid = document.getElementById('certificateGrid');
+            grid.innerHTML = '';
+            const p = userProgress[currentUser.id] || {};
+            let hasCert = false;
+
+            courses.forEach(c => {
+                const cp = p[c.id];
+                if (cp && cp.completed) {
+                    hasCert = true;
+                    const card = document.createElement('div');
+                    card.className = 'course-card';
+                    card.innerHTML = `
+                        <div class="course-header" style="background: linear-gradient(135deg, var(--success), var(--accent))">
+                            <div style="font-size:72px;">🏆</div>
+                        </div>
+                        <div class="course-body">
+                            <div class="course-category">Certificate</div>
+                            <h3 class="course-title">${c.title}</h3>
+                            <p class="course-description">Earned on ${cp.testDate} with score ${cp.score}%</p>
+                            <button class="btn-primary" style="margin-top: 10px;" onclick="viewCertificate(${c.id})">View PDF</button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                }
+            });
+
+            if (!hasCert) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px; background: var(--card-bg); border-radius: 20px; border: 2px dashed var(--border);"><i class="fas fa-award" style="font-size: 48px; color: var(--gray); margin-bottom: 20px; display: block;"></i>No certificates earned yet. Complete courses to earn them!</div>';
+            }
+        }
+
+        function viewCertificate(courseId) {
+            currentCourse = courses.find(c => c.id === courseId);
+            const cp = getCourseProgress(courseId);
+            showResults(cp.score, true, true);
+        }
+
+        function showSettings() { showPage('settingsPage'); }
+        function showLeaderboard() { alert('Leaderboard feature coming soon!'); }
+        function showHelp() { alert('Help & Support center coming soon!'); }
+
+        function backToDashboard() { loadDashboard(); showPage('dashboardPage'); }
+        function backToCourse() { loadLearning(); updateProgress(); showPage('courseDetailPage'); }
+        function showDashboard() { loadDashboard(); showPage('dashboardPage'); }
+        function showMyCourses() { loadDashboard(); showPage('dashboardPage'); }
+
+        function getCourseProgress(id) {
+            if (!userProgress[currentUser.id]) userProgress[currentUser.id] = {};
+            if (!userProgress[currentUser.id][id]) userProgress[currentUser.id][id] = { modsCompleted: 0, completed: false, score: 0 };
+            return userProgress[currentUser.id][id];
+        }
+
+        function saveCourseProgress(id, p) {
+            if (!userProgress[currentUser.id]) userProgress[currentUser.id] = {};
+            userProgress[currentUser.id][id] = p;
+            saveProgress();
+        }
+
+        function saveProgress() {
+            localStorage.setItem('academyProProgress', JSON.stringify(userProgress));
+            if (currentUser) localStorage.setItem('academyProUser', JSON.stringify(currentUser));
+        }
+
+        function loadProgress() {
+            const sp = localStorage.getItem('academyProProgress');
+            const su = localStorage.getItem('academyProUser');
+            if (sp) userProgress = JSON.parse(sp);
+            if (su) currentUser = JSON.parse(su);
+            applyTheme(); // Load theme from local storage
+        }
+
+        // Back to Top Logic
+        window.onscroll = function() {
+            const btn = document.getElementById('scrollTopBtn');
+            if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
+                btn.style.display = 'flex';
+            } else {
+                btn.style.display = 'none';
+            }
+        };
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        init();
+    </script>
+    <button id="scrollTopBtn" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+</body>
+
+</html>
